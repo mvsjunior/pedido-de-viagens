@@ -1,59 +1,235 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Módulo para Aprovação de Solicitações
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# Índice
+- [Tecnologias Utilizadas](#tecnologias-utilizadas)
+- [Instalação e Execução com Docker](#instalação-e-execução-com-docker)
+- [Regra de Negócio — Sistema de Aprovação de Solicitações de Viagem](#regra-de-negócio--sistema-de-aprovação-de-solicitações-de-viagem)
 
-## About Laravel
+# Visão Geral / Tecnologias Utilizadas
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Este projeto consiste em um sistema de gestão e aprovação de solicitações de viagem corporativas, permitindo que colaboradores realizem pedidos e que gestores os aprovem ou cancelem conforme regras de negócio definidas.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Tecnologias Utilizadas
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **PHP 8.3** — Linguagem principal utilizada no backend.
+- **Laravel** — Framework responsável pela estrutura da API, autenticação, regras de negócio e envio de e-mails.
+- **MySQL 8** — Banco de dados para armazenamento das solicitações e usuários.
+- **JWT Auth** — Autenticação baseada em tokens JWT.
+- **Docker** — Contêinerização da aplicação para facilitar instalação e execução.
+- **Nginx** — Servidor web utilizado para servir a aplicação.
+- **Composer** — Gerenciamento de dependências PHP.
+- **PHPUnit** — Ferramenta de testes automatizados.
+- **Mailables do Laravel** — Envio de notificações por e-mail quando uma solicitação é aprovada ou cancelada.
 
-## Learning Laravel
+# Instalação e Execução com Docker
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+1. Acesse o diretório `/docker` na raiz do projeto.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+2. Execute o build dos contêineres:
+```bash
+docker-compose build
+```
+3. Suba o ambiente:
+```bash
+docker-compose up -d
+```
+4. Instale as dependências do Laravel (executado dentro do container `app`):
+```bash
+docker exec -it laravel-app composer install
+```
+5. Gere a chave da aplicação:
+```bash
+docker exec -it laravel-app php artisan key:generate
+```
+6. Rode as migrations:
+```bash
+docker exec -it laravel-app php artisan migrate
+```
+A aplicação estará disponível em: **[http://localhost:8000]()**
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Organização de Diretórios
 
-### Premium Partners
+A estrutura do projeto segue um padrão baseado em **Domínios (Domain-Driven Design Lite)**, organizando regras de negócio, controllers, ações e modelos de forma independente por contexto. Isso torna o sistema mais modular, escalável e fácil de manter.
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+A seguir, a estrutura do diretório `app/Domains` e a função de cada parte.
+```bash
+app/Domains\
+├── Auth\
+│ ├── Actions\
+│ │ └── DTO\
+│ ├── DTO\
+│ ├── Exceptions\
+│ └── Http\
+│ ├── Controllers\
+│ └── Requests\
+└── Travel\
+├── Actions\
+├── DTO\
+├── Exceptions\
+├── Factories\
+├── Http\
+│ ├── Controllers\
+│ └── Requests\
+├── Models\
+├── Policies\
+├── routes\
+└── ValueObjects
 
-## Contributing
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Descrição dos Diretórios
 
-## Code of Conduct
+### **Domínio Auth**
+Responsável por tudo relacionado à autenticação e autorização.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- **Actions**  
+  Contém classes que executam ações específicas (ex: login, registro).  
+  - **Actions/DTO**: Objetos de transferência de dados usados pelas actions.
 
-## Security Vulnerabilities
+- **DTO**  
+  Objetos imutáveis usados para transportar dados entre camadas.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- **Exceptions**  
+  Exceções específicas do domínio de autenticação.
 
-## License
+- **Http/Controllers**  
+  Controladores que tratam requisições relacionadas a login, logout e registro.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- **Http/Requests**  
+  Form Requests responsáveis por validações específicas do domínio de autenticação.
+
+---
+
+### **Domínio Travel**
+Responsável pela gestão das solicitações de viagem e processo de aprovação.
+
+- **Actions**  
+  Contém classes que executam ações da regra de negócio (abrir solicitação, aprovar, cancelar).
+
+- **DTO**  
+  Objetos de transferência que organizam dados de entrada e saída entre camadas do domínio.
+
+- **Exceptions**  
+  Exceções específicas das regras de negócio de viagem (ex: solicitação já aprovada).
+
+- **Factories**  
+  Classes utilizadas para gerar instâncias de modelos ou objetos complexos.
+
+- **Http/Controllers**  
+  Controladores responsáveis por receber requisições da API do domínio de viagens.
+
+- **Http/Requests**  
+  Form Requests que centralizam validações (ex: validação de cancelamento).
+
+- **Models**  
+  Modelos Eloquent relacionados ao domínio (ex: TravelRequest).
+
+- **Policies**  
+  Regras de autorização para verificar se um usuário pode aprovar, cancelar ou editar solicitações.
+
+- **routes**  
+  Arquivos de rotas específicos do domínio, mantendo o roteamento isolado e organizado.
+
+- **ValueObjects**  
+  Objetos de valor que representam conceitos imutáveis e específicos do domínio (ex: datas de viagem, motivos de cancelamento).
+
+---
+
+# Regra de Negócio — Sistema de Aprovação de Solicitações de Viagem (Travel)
+
+Este módulo define o fluxo de criação, aprovação e cancelamento de solicitações de viagem, incluindo permissões, estados da solicitação e ações automáticas.
+
+---
+
+## Papéis de Usuário
+
+| Papel          | Permissões |
+|----------------|------------|
+| **Common User** | Criar, listar, visualizar e editar apenas suas próprias solicitações pendentes. Não pode aprovar ou cancelar. |
+| **Manager**     | Aprovar ou cancelar solicitações pendentes de qualquer usuário. |
+| **Admin**       | Pode aprovar ou cancelar qualquer solicitação, independentemente do autor ou estado. |
+
+---
+
+## Ciclo de Vida da Solicitação
+
+### **1. pending**
+- Estado inicial ao criar uma solicitação.
+- Pode ser editada pelo próprio solicitante.
+- Pode ser aprovada ou cancelada por Manager ou Admin.
+
+### **2. approved**
+- Estado definido por Manager ou Admin.
+- Registra:
+  - `approved_by`
+  - `approved_at`
+- Dispara envio de e-mail automático ao solicitante.
+
+### **3. canceled**
+- Estado definido por Manager ou Admin.
+- Exige:
+  - `cancel_reason` (obrigatório)
+  - `canceled_by`
+- Dispara envio de e-mail automático ao solicitante.
+
+---
+
+## Regras de Autorização
+
+### Common User
+- Pode criar solicitações.
+- Pode visualizar apenas as suas solicitações.
+- Não pode aprovar ou cancelar.
+
+### Manager
+- Pode aprovar ou cancelar solicitações pendentes.
+- Cancelamento exige `cancelReason`.
+- Não pode modificar solicitações já aprovadas ou canceladas.
+
+### Admin
+- Permissão total para aprovar e cancelar.
+- Sem restrições por autor ou estado.
+
+---
+
+## Envio Automático de E-mail
+
+O sistema envia e-mails ao solicitante sempre que houver decisão sobre a solicitação:
+
+### Quando aprovada
+- Informações enviadas:
+  - Novo status
+  - Destino
+  - Datas
+  - Nome do aprovador
+
+### Quando cancelada
+- Informações enviadas:
+  - Novo status
+  - Motivo do cancelamento
+  - Informações gerais da solicitação
+
+O envio ocorre imediatamente após a atualização no banco de dados.
+
+---
+
+## Registro de Auditoria
+
+| Ação          | Campos registrados              |
+|---------------|----------------------------------|
+| Aprovação     | `status`, `approved_by`, `approved_at` |
+| Cancelamento  | `status`, `cancel_reason`, `canceled_by`, `canceled_at` |
+
+---
+
+## Resumo das Regras
+
+- Solicitações começam sempre em **pending**.
+- Apenas Manager e Admin podem aprovar ou cancelar.
+- Cancelamento sempre exige motivo.
+- O solicitante é sempre notificado por e-mail.
+
+---
+
