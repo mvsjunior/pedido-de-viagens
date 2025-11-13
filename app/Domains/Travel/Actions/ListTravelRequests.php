@@ -19,10 +19,21 @@ class ListTravelRequests
         }
 
         if(sizeof($filter)){
-            $travelRequestModel->where($filter);
+
+            if(isset($filter['departureDate'])){
+                $travelRequestModel->where('departure_date', '>=', $filter['departureDate']);
+            }
+
+            if(isset($filter['returnDate'])){
+                $travelRequestModel->where('return_date', '<=', $filter['returnDate']);
+            }
+
+            if(isset($filter['status'])){
+                $travelRequestModel->where('status', '=', $filter['status']);
+            }
         }
 
-        $requests = $travelRequestModel->paginate(5);
+        $requests = $travelRequestModel->paginate(50);
         $dtoRequests = [];
 
         foreach($requests->items() as $request){

@@ -5,7 +5,7 @@ namespace App\Domains\Travel\Http\Controllers;
 use App\Domains\Travel\Actions\{ApproveTravelRequest, CancelTravelRequest, EditTravelRequest,ListTravelRequests,OpenATravelRequest, ReopenTravelRequest, ShowTravelRequest};
 use App\Domains\Travel\DTO\EditTravelRequestDTO;
 use App\Domains\Travel\Exceptions\{DepartureDateIsLaterThanReturnDate,NotAuthorizedToApprove, NotAuthorizedToCancel, TravelHasAlreadyBeenApproved, TravelHasAlreadyBeenCanceled, TravelRequestNotFound,UserCannotEditThisRequest,UserNotFound};
-use App\Domains\Travel\Http\Requests\{CancelTravelRequestRequest, CreateTravelRequestRequest,EditTravelRequestRequest};
+use App\Domains\Travel\Http\Requests\{CancelTravelRequestRequest, CreateTravelRequestRequest,EditTravelRequestRequest, ListTravelRequestRequest};
 use App\Domains\Travel\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
@@ -27,9 +27,9 @@ class TravelRequestController extends Controller {
         return response()->json(["message" => 'The travel request has been submitted.'],201);
     }
 
-    public function list(Request $request, ListTravelRequests $action)
+    public function list(ListTravelRequestRequest $request, ListTravelRequests $action)
     {
-        $requests = $action->handle(User::find((int) $request->user()->id));
+        $requests = $action->handle(User::find((int) $request->user()->id), $request->only(["status", "departureDate", "returnDate"]));
 
         return response()->json($requests);
     }
