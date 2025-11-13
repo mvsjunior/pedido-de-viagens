@@ -9,6 +9,9 @@ use App\Domains\Travel\Exceptions\UserNotFound;
 use App\Domains\Travel\Models\TravelRequest;
 use App\Domains\Travel\Models\User;
 use App\Domains\Travel\Policies\TravelRequestPolicies;
+use App\Mail\TravelRequestApprovedMail;
+use App\Mail\TravelRequestCanceledMail;
+use Illuminate\Support\Facades\Mail;
 
 class ApproveTravelRequest 
 {
@@ -36,5 +39,8 @@ class ApproveTravelRequest
 
         $travelRequest->approve($approver->id);
         $travelRequest->save();
+
+        // Enviar e-mail
+        Mail::to($travelRequest->requester->email)->send(new TravelRequestApprovedMail($travelRequest));
     }
 }

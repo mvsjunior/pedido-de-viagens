@@ -5,6 +5,8 @@ namespace App\Domains\Travel\Models;
 use App\Domains\Travel\ValueObjects\Status;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Domains\Travel\Models\User;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class TravelRequest extends Model {
 
@@ -14,7 +16,7 @@ class TravelRequest extends Model {
     protected $fillable = ['user_id', 'destination', 'departure_date', 'return_date'];
     protected $casts = ['status' => Status::class];
 
-    public function requester()
+    public function requester():HasOne
     {
         return $this->hasOne(User::class, 'id', 'user_id');
     }

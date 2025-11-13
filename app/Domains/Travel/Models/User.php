@@ -18,7 +18,7 @@ class User extends ModelsUser
     ];
 
     public function travelRequests(){
-        return $this->hasMany(TravelRequest::class);
+        return $this->belongSto(TravelRequest::class);
     }
 
     public function isManager(){

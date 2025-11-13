@@ -4,7 +4,10 @@ namespace Tests\Feature;
 
 use App\Domains\Travel\Models\User;
 use App\Domains\Travel\Models\TravelRequest;
+use App\Mail\TravelRequestApprovedMail;
+use App\Mail\TravelRequestCanceledMail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class TravelRequestControllerTest extends TestCase
@@ -186,5 +189,42 @@ class TravelRequestControllerTest extends TestCase
             ])
             ->assertOk();
             // ->assertJsonFragment(['status' => 'canceled']);
+    }
+
+    public function test_requester_receives_email_on_approval_or_cancellation()
+    {
+        Mail::fake();
+
+        // Solicitação aprovada
+        $travel = TravelRequest::factory()->create([
+            'user_id' => $this->commonUser->id,
+            'status' => 'pending',
+        ]);
+
+        $managerToken = auth('api')->login($this->manager);
+
+        $this->withHeader('Authorization', "Bearer {$managerToken}")
+            ->patchJson(route('travel.approve', $travel->id))
+            ->assertOk();
+
+        Mail::assertSent(TravelRequestApprovedMail::class, function ($mail) use ($travel) {
+            return $mail->travelRequest->id === $travel->id;
+        });
+
+        // Solicitação cancelada
+        $travelToCancel = TravelRequest::factory()->create([
+            'user_id' => $this->commonUser->id,
+            'status' => 'pending',
+        ]);
+
+        $this->withHeader('Authorization', "Bearer {$managerToken}")
+            ->patchJson(route('travel.cancel', $travelToCancel->id), [
+                'cancelReason' => 'Mudança de planejamento',
+            ])
+            ->assertOk();
+
+        Mail::assertSent(TravelRequestCanceledMail::class, function ($mail) use ($travelToCancel) {
+            return $mail->travelRequest->id === $travelToCancel->id;
+        });
     }
 }

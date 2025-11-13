@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Mail;
+
+use App\Domains\Travel\Models\TravelRequest;
+use Illuminate\Bus\Queueable;
+use Illuminate\Mail\Mailable;
+use Illuminate\Queue\SerializesModels;
+
+class TravelRequestCanceledMail extends Mailable
+{
+    use Queueable, SerializesModels;
+
+    public function __construct(public TravelRequest $travelRequest)
+    {
+    }
+
+    public function build()
+    {
+        return $this->subject('Sua solicitação de viagem foi cancelada')
+                    ->markdown('emails.travel.canceled');
+    }
+}
