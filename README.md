@@ -23,7 +23,7 @@ Este projeto consiste em um sistema de gestão e aprovação de solicitações d
 
 # Instalação e Execução com Docker
 
-## Criando o arquivo .env e o .env.e
+## Criando o arquivo .env
 
 Caso o projeto ainda não tenha .env, execute:
 ```bash
