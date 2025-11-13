@@ -34,12 +34,13 @@ services:
     container_name: mysql
     restart: unless-stopped
     environment:
-      MYSQL_DATABASE: gestao_de_viagens
       MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: gestao_de_viagens
       MYSQL_USER: gestao_de_viagens
       MYSQL_PASSWORD: gestao_de_viagens
     volumes:
       - db_data:/var/lib/mysql
+      - ./mysql/initdb.d:/docker-entrypoint-initdb.d
     ports:
       - "3306:3306"
     networks:

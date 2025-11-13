@@ -25,9 +25,9 @@
         <env name="CACHE_STORE" value="array"/>
         <env name="DB_CONNECTION" value="mysql"/>
         <env name="DB_HOST" value="db"/>
-        <env name="DB_DATABASE" value="gestao_de_viagens"/>
-        <env name="DB_USERNAME" value="gestao_de_viagens"/>
-        <env name="DB_PASSWORD" value="gestao_de_viagens"/>
+        <env name="DB_DATABASE" value="gestao_de_viagens_test"/>
+        <env name="DB_USERNAME" value="test_user"/>
+        <env name="DB_PASSWORD" value="test_pass"/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
