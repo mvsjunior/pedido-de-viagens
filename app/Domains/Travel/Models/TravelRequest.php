@@ -3,9 +3,12 @@
 namespace App\Domains\Travel\Models;
 
 use App\Domains\Travel\ValueObjects\Status;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class TravelRequest extends Model {
+
+    use HasFactory;
 
     protected $table = 'travel_requests';
     protected $fillable = ['user_id', 'destination', 'departure_date', 'return_date'];
@@ -16,8 +19,9 @@ class TravelRequest extends Model {
         return $this->hasOne(User::class, 'id', 'user_id');
     }
 
-    public function approve()
+    public function approve(int $userId)
     {
+        $this->approved_by = $userId;
         $this->status = Status::Approved;
     }
 

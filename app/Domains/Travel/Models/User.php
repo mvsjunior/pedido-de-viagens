@@ -2,9 +2,14 @@
 
 namespace App\Domains\Travel\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\User as ModelsUser;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Model {
+class User extends ModelsUser
+{
     protected $table = "users";
 
     protected $hidden = [
