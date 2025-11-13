@@ -75,7 +75,7 @@ class AuthControllerTest extends TestCase
         $token = auth('api')->login($user);
 
         $response = $this->withHeader('Authorization', "Bearer {$token}")
-                         ->postJson('/api/logout');
+                         ->postJson(route('api.logout'));
 
         $response->assertStatus(200)
                  ->assertJson(['message' => 'Successfully logged out']);
