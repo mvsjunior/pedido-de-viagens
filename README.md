@@ -104,6 +104,214 @@ docker exec -it laravel-app php artisan migrate:fresh --seed --env=testing
 A aplicação estará disponível em: **[http://localhost:8000]()**
 
 ---
+# Documentação da API — Endpoints e Parâmetros
+
+## Autenticação
+
+### POST /login
+Realiza login e retorna o token JWT.
+
+**Headers**
+```
+Accept: application/json
+Content-Type: application/json
+```
+
+**Body**
+```
+{
+    // "email": "mary@example.com", // manager
+    // "email": "john@example.com", // common_user
+  "email": "admin@example.com",
+  "password": "password"
+}
+```
+
+**Resposta**
+```
+{
+    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzYzMDcyNjY5LCJleHAiOjE3NjMwNzYyNjksIm5iZiI6MTc2MzA3MjY2OSwianRpIjoid3F4RUVueHFVaFBZaHdKaSIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.3iSTi-VLXmCmU9vKbziViUkwvoRnW_44hsBOBiD1Ouk",
+    "expiresIn": 3600
+}s
+```
+
+---
+
+### POST /logout
+Encerra a sessão do usuário autenticado.
+
+**Headers**
+```
+Authorization: Bearer {token}
+```
+
+**Resposta**
+```
+{
+  "message": "Successfully logged out"
+}
+```
+
+---
+
+# Solicitações de Viagem (Travel)
+
+Todos os endpoints exigem:
+
+```
+Authorization: Bearer {token}
+```
+
+---
+
+## POST /travel
+Cria uma nova solicitação de viagem.
+
+**Body**
+```
+{
+  "destination": "Parque do Ibirapuera, SP",
+  "departureDate": "2025-12-20",
+  "returnDate": "2026-05-28"
+}
+```
+
+**Resposta**
+```
+{
+  "message": "The travel request has been submitted."
+}
+```
+
+---
+
+## GET /travel
+Lista solicitações do usuário autenticado.
+
+**Query Params (opcionais)**  
+- status  
+- departureDate  (Intervalo inicial)
+- returnDate  (Intervalo final)
+- page  
+
+**Exemplo**
+```
+/travel?page=1&status=approved
+```
+
+---
+
+## GET /travel/{id}
+Retorna os detalhes de uma solicitação.
+
+**Resposta**
+```
+{
+    "currentPage": 1,
+    "perPage": 50,
+    "total": 3,
+    "data": [
+        {
+            "id": 2,
+            "requesterName": "Admin User",
+            "destination": "São Paulo, SP",
+            "status": "Approved",
+            "departureDate": "2025-11-20",
+            "returnDate": "2025-11-23"
+        },
+        {
+            "id": 5,
+            "requesterName": "John Requester",
+            "destination": "São Paulo, SP",
+            "status": "Approved",
+            "departureDate": "2025-11-20",
+            "returnDate": "2025-11-23"
+        },
+        {
+            "id": 8,
+            "requesterName": "Mary Approver",
+            "destination": "São Paulo, SP",
+            "status": "Approved",
+            "departureDate": "2025-11-20",
+            "returnDate": "2025-11-23"
+        }
+    ]
+}
+```
+
+---
+
+## PATCH /travel/{id}
+Edita uma solicitação pendente.
+
+**Body**
+```
+{
+  "destination": "Expo Tech Center, Salvador - BA"
+}
+```
+**Resposta**
+```
+{
+    "id": 3,
+    "requesterName": "Admin User",
+    "requesterEmail": "admin@example.com",
+    "destination": "Expor Tech Center, Salvador - BA",
+    "departureDate": "2025-11-20",
+    "returnDate": "2025-11-23",
+    "status": "Canceled",
+    "requestedOn": "2025-11-13 21:41:02",
+    "updatedAt": "2025-11-13 22:27:56"
+}
+```
+
+---
+
+## PATCH /travel/{id}/approve
+Aprova uma solicitação de viagem.
+
+**Resposta**
+```
+{
+    "message": "Travel Request has approved."
+}
+```
+
+---
+
+## PATCH /travel/{id}/cancel
+Cancela uma solicitação de viagem.
+
+**Body**
+```
+{
+  "cancelReason": "Mudança de planejamento"
+}
+```
+
+**Resposta**
+```
+{
+    "message": "Travel Request has been canceled."
+}
+```
+
+---
+
+# Resumo dos Endpoints
+
+| Método | Endpoint            | Descrição           |
+|--------|----------------------|---------------------|
+| POST   | /login               | Autenticação        |
+| POST   | /logout              | Logout              |
+| POST   | /travel              | Criar solicitação   |
+| GET    | /travel              | Listar solicitações |
+| GET    | /travel/{id}         | Ver detalhes        |
+| PATCH  | /travel/{id}         | Editar solicitação  |
+| PATCH  | /travel/{id}/approve | Aprovar             |
+| PATCH  | /travel/{id}/cancel  | Cancelar            |
+
+---
 
 ## Organização de Diretórios
 
