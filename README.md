@@ -74,6 +74,9 @@ docker exec -it laravel-app php artisan key:generate
 ```bash
 docker exec -it laravel-app php artisan jwt:secret
 
+```
+
+```bash
 docker exec -it laravel-app php artisan jwt:secret --env=testing
 ```
 
@@ -81,6 +84,11 @@ docker exec -it laravel-app php artisan jwt:secret --env=testing
 ```bash
 docker exec -it laravel-app php artisan migrate:fresh --seed
 ```
+
+```bash
+docker exec -it laravel-app php artisan migrate:fresh --seed --env=testing
+```
+
 A aplicação estará disponível em: **[http://localhost:8000]()**
 
 ---
