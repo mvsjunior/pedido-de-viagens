@@ -27,8 +27,12 @@ class TravelRequestPolicies
     public static function canApprove(User $approver, TravelRequest $travelRequest): bool
     {
         $theRequestWasNotMadeByApprover = ($travelRequest->user_id == $approver->id) ? false : true;
+        $isAdminOrIsManager = $approver->isAdmin() || $approver->isManager() ? true : false;
 
-        return ($approver->isAdmin() || $approver->isManager()) && ($theRequestWasNotMadeByApprover || $approver->isAdmin()) && $travelRequest->isPending();
+        $canApprove = ($approver->isManager() && $theRequestWasNotMadeByApprover) ? true : false;
+        $canApprove = $canApprove || $approver->isAdmin() ? true : false;
+
+        return $canApprove;
     }
 
     public static function canCancel(User $approver, TravelRequest $travelRequest): bool

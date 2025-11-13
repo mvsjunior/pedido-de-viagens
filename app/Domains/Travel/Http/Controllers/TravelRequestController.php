@@ -24,7 +24,7 @@ class TravelRequestController extends Controller {
             return response()->json(["message" => 'An error occurred while submitting the travel request.' . $th->getMessage()]);
         }
 
-        return response()->json(["message" => 'The travel request has been submitted.']);
+        return response()->json(["message" => 'The travel request has been submitted.'],201);
     }
 
     public function list(Request $request, ListTravelRequests $action)

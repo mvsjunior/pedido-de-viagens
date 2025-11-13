@@ -34,7 +34,7 @@ class ApproveTravelRequest
             throw new NotAuthorizedToApprove;
         }
 
-        $travelRequest->approve();
+        $travelRequest->approve($approver->id);
         $travelRequest->save();
     }
 }
