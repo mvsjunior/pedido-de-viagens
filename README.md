@@ -23,16 +23,45 @@ Este projeto consiste em um sistema de gestão e aprovação de solicitações d
 
 # Instalação e Execução com Docker
 
+## Criando o arquivo .env e o .env.e
+
+Caso o projeto ainda não tenha .env, execute:
+```bash
+cp .env.example .env
+```
+E atualize as variáveis de banco de dados para refletir as usadas no container:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=db
+DB_PORT=3306
+DB_DATABASE=gestao_de_viagens
+DB_USERNAME=gestao_de_viagens
+DB_PASSWORD=gestao_de_viagens
+```
+
+## Subindo os containers
+
+Entre na pasta docker (pois é onde está o docker-compose.yml):
+```bash
+cd docker/
+```
+
 1. Acesse o diretório `/docker` na raiz do projeto.
 
 2. Execute o build dos contêineres:
 ```bash
-docker-compose build
+docker compose build
 ```
 3. Suba o ambiente:
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
+Isso irá criar e subir os containers:
+  - laravel-app → container do PHP (PHP-FPM)
+  - nginx → servidor web
+  - mysql → banco de dados MySQL 8
+
 4. Instale as dependências do Laravel (executado dentro do container `app`):
 ```bash
 docker exec -it laravel-app composer install
@@ -41,9 +70,16 @@ docker exec -it laravel-app composer install
 ```bash
 docker exec -it laravel-app php artisan key:generate
 ```
-6. Rode as migrations:
+6. Gere as chaves secretas JWT para o ambiente de produção e para o ambiente de testes
 ```bash
-docker exec -it laravel-app php artisan migrate
+docker exec -it laravel-app php artisan jwt:secret
+
+docker exec -it laravel-app php artisan jwt:secret --env=testing
+```
+
+7. Rode as migrations:
+```bash
+docker exec -it laravel-app php artisan migrate:fresh --seed
 ```
 A aplicação estará disponível em: **[http://localhost:8000]()**
 
