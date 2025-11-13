@@ -1,0 +1,52 @@
+version: "3.9"
+
+services:
+  app:
+    build:
+      context: ..              # 👈 aponta para a raiz do Laravel
+      dockerfile: docker/Dockerfile  # 👈 caminho do Dockerfile relativo ao contexto
+    user: "${UID:-1000}:${GID:-1000}"
+    image: laravel-app
+    container_name: laravel-app
+    restart: unless-stopped
+    volumes:
+      - ../:/var/www           # 👈 monta a raiz do projeto
+    networks:
+      - laravel
+
+  web:
+    image: nginx:alpine
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ../:/var/www
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - laravel
+
+  db:
+    image: mysql:8.0
+    command: --ssl=0 --skip-ssl
+    container_name: mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: gestao_de_viagens
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: gestao_de_viagens
+      MYSQL_PASSWORD: gestao_de_viagens
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - laravel
+
+networks:
+  laravel:
+
+volumes:
+  db_data:
