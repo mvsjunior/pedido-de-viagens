@@ -21,6 +21,18 @@ Este projeto consiste em um sistema de gestão e aprovação de solicitações d
 - **PHPUnit** — Ferramenta de testes automatizados.
 - **Mailables do Laravel** — Envio de notificações por e-mail quando uma solicitação é aprovada ou cancelada.
 
+## Listagem das rotas
+```bash
+  POST       api/login ..................................... api.login › App\Domains\Auth\Http\Controllers\AuthController@login
+  POST       api/logout .................................. api.logout › App\Domains\Auth\Http\Controllers\AuthController@logout
+  GET|HEAD   api/travel ........................ travel.list › App\Domains\Travel\Http\Controllers\TravelRequestController@list
+  POST       api/travel ........................ travel.open › App\Domains\Travel\Http\Controllers\TravelRequestController@open
+  GET|HEAD   api/travel/{id} ................... travel.show › App\Domains\Travel\Http\Controllers\TravelRequestController@show
+  PATCH      api/travel/{id} ................... travel.edit › App\Domains\Travel\Http\Controllers\TravelRequestController@edit
+  PATCH      api/travel/{id}/approve ..... travel.approve › App\Domains\Travel\Http\Controllers\TravelRequestController@approve
+  PATCH      api/travel/{id}/cancel ........ travel.cancel › App\Domains\Travel\Http\Controllers\TravelRequestController@cancel
+```
+
 # Instalação e Execução com Docker
 
 ## Criando o arquivo .env
