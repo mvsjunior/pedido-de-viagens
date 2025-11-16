@@ -3,14 +3,14 @@ version: "3.9"
 services:
   app:
     build:
-      context: ..              # 👈 aponta para a raiz do Laravel
-      dockerfile: docker/Dockerfile  # 👈 caminho do Dockerfile relativo ao contexto
+      context: ..
+      dockerfile: docker/Dockerfile
     user: "${UID:-1000}:${GID:-1000}"
     image: laravel-app
     container_name: laravel-app
     restart: unless-stopped
     volumes:
-      - ../:/var/www           # 👈 monta a raiz do projeto
+      - ../:/var/www
     networks:
       - laravel
 
@@ -43,6 +43,28 @@ services:
       - ./mysql/initdb.d:/docker-entrypoint-initdb.d
     ports:
       - "3306:3306"
+    networks:
+      - laravel
+
+  worker:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: laravel-worker
+    container_name: laravel-worker
+    restart: unless-stopped
+    depends_on:
+      - db
+      - app
+    volumes:
+      - ../:/var/www
+    working_dir: /var/www
+    user: "${UID:-1000}:${GID:-1000}"
+    environment:
+      - QUEUE_CONNECTION=database
+      - APP_ENV=local
+      - APP_DEBUG=true
+    command: ["php", "/var/www/artisan", "queue:work", "--queue=high,emails", "--tries=3", "--timeout=90", "--memory=512"]
     networks:
       - laravel
 
