@@ -9,13 +9,11 @@ use Illuminate\Queue\SerializesModels;
 
 class TravelRequestApprovedMail extends Mailable
 {
-    use Queueable, SerializesModels;
-
     public function __construct(public TravelRequest $travelRequest)
     {
     }
 
-    public function build()
+    public function build(): Mailable
     {
         return $this->subject('Sua solicitação de viagem foi aprovada')
                     ->markdown('emails.travel.approved');
