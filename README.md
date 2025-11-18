@@ -11,15 +11,17 @@ Este projeto consiste em um sistema de gestão e aprovação de solicitações d
 
 ## Tecnologias Utilizadas
 
-- **PHP 8.3** — Linguagem principal utilizada no backend.
-- **Laravel** — Framework responsável pela estrutura da API, autenticação, regras de negócio e envio de e-mails.
-- **MySQL 8** — Banco de dados para armazenamento das solicitações e usuários.
-- **JWT Auth** — Autenticação baseada em tokens JWT.
-- **Docker** — Contêinerização da aplicação para facilitar instalação e execução.
-- **Nginx** — Servidor web utilizado para servir a aplicação.
-- **Composer** — Gerenciamento de dependências PHP.
+- **PHP 8.3** — Linguagem principal utilizada no backend;
+- **Laravel** — Framework responsável pela estrutura da API, autenticação, regras de negócio e envio de e-mails;
+- **Laravel Queues & Jobs** – Sistema de processamento assíncrono utilizado para envio de e-mails e execução de tarefas em segundo plano;
+- **Laravel Workers** – Containers dedicados ao consumo das filas, garantindo execução paralela e eficiente dos Jobs;
+- **Mailables do Laravel** — Envio de notificações por e-mail quando uma solicitação é aprovada ou cancelada;
+- **MySQL 8** — Banco de dados para armazenamento das solicitações e usuários;
+- **JWT Auth** — Autenticação baseada em tokens JWT;
+- **Docker** — Contêinerização da aplicação para facilitar instalação e execução;
+- **Nginx** — Servidor web utilizado para servir a aplicação;
+- **Composer** — Gerenciamento de dependências PHP;
 - **PHPUnit** — Ferramenta de testes automatizados.
-- **Mailables do Laravel** — Envio de notificações por e-mail quando uma solicitação é aprovada ou cancelada.
 
 ## Listagem das rotas
 ```bash
